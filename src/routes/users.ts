@@ -60,20 +60,13 @@ export default new Elysia({
         })
     })
     .group("/:userId", app =>
-        app.derive(async ({ params: { userId } }): Promise<{
-            paramUser: NonNullable<
-                User
-            >;
-        }> => {
+        app.derive(async ({ params: { userId } }) => {
             const user = await prisma.user.findUnique({ where: { id: userId } });
             if (!user) {
                 throw status(404, "User not found!")
             };
             return { paramUser: user }
         })
-            .derive(({ paramUser }) => {
-                if (!paramUser) return status(404, "User not found!")
-            })
             .get("/", async ({ paramUser }) => {
                 return paramUser;
             })
